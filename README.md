@@ -1,2 +1,2 @@
 # mitoo
-Mirror tool : Synchronize data content from remote directory ,server to local directory
+Mirror tool : A tool to help synchronize data content from remote directory or server to local directory on windows machine.
