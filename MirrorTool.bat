@@ -1,6 +1,6 @@
 @ECHO OFF
 echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-echo      Mirror tool version 1.0 release date 2015/09/05 
+echo      Mirror tool version 1.1 release date 2015/09/17 
 echo      ---------------------------------------------------
 echo      Author Santosh Dwivedi santosh(at)sanscreative(dot)org
 echo      ---------------------------------------------------
