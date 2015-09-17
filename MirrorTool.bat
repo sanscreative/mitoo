@@ -16,7 +16,8 @@ if "%2"=="push" SET ACTION="push"
 SET OPTION=/E
 if "%3"=="--hard" SET OPTION=/mir
 if "%FOLDERLIST%"=="" goto :NOFILE
-
+set EXRTA_OPTIONS=
+for /f "usebackq tokens=3*" %%i in (`echo %*`) DO @ set EXRTA_OPTIONS=%%j
 echo processing folder list file %FOLDERLIST%
 
 REM List the entries
@@ -34,7 +35,7 @@ for /f "tokens=1-2 delims==" %%A in (%1%) do (
   if %ACTION%=="pull" (
   echo Action: Mirroring "%%~B" to "%%~A"  
   if exist "%%~B" (
-  robocopy "%%~B" "%%~A" %OPTION%
+  robocopy "%%~B" "%%~A" %OPTION% %EXRTA_OPTIONS%
   )else (  
    echo Error "%%~B" does not exists !
   )
@@ -42,7 +43,7 @@ for /f "tokens=1-2 delims==" %%A in (%1%) do (
 if %ACTION%=="push" (
   echo Action: Mirroring "%%~A" to "%%~B"  
   if exist "%%~A" (
-  robocopy "%%~A" "%%~B" %OPTION%
+  robocopy "%%~A" "%%~B" %OPTION% %EXRTA_OPTIONS%
   )else (  
    echo Error "%%~A" does not exists !
   )
@@ -52,7 +53,7 @@ goto :END
 :NOFILE
 echo      ***  Error no folderlist.txt file  specified!      ***
 echo      --------------------------------------------------------
-echo      Usage: MirrorTool folderlist.txt [push ,pull] [--hard ] 
+echo      Usage: MirrorTool folderlist.txt [push ,pull] [--hard| --soft ] [Extra options]
 echo      ----------------------Examples:-------------------------
 echo      Usage:
 echo  MirrorTool folderlist.txt pull --hard pulls content from 
@@ -67,6 +68,7 @@ echo                                  are not presnet in remote.
 echo  MirrorTool folderlist.txt       same as  MirrorTool.exe folderlist.txt pull
 echo  MirrorTool folderlist.txt push --hard pushes local directory to remote
 echo                                        to create exact mirror
+echo  [Extra options] include  /XN  exclude Newer files, /XO exclude Older files. 
 echo  MirrorTool folderlist.txt push  pushes only modified local directory to remote
 echo      --------------------------------------------------------
 echo      Where folderlist.txt contains local folder and remote mapping
