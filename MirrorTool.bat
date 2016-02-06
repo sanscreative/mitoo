@@ -13,6 +13,8 @@ echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 SET FOLDERLIST=%1
 SET ACTION="pull"
 if "%2"=="push" SET ACTION="push"
+if "%2"=="collect" SET ACTION="collect"
+if "%2"=="collect" SET DSTFILEDIR="%3"
 SET OPTION=/E
 if "%3"=="--hard" SET OPTION=/mir
 if "%FOLDERLIST%"=="" goto :NOFILE
@@ -30,7 +32,11 @@ goto :AllDone
 :mirror 
 
 REM echo processing   %1% ...
-
+if %ACTION%=="collect" (
+  echo Action: Collecting files listed in   %1%  to directory  %DSTFILEDIR%
+  for /f "delims=" %%i in (%1%) do copy "%%i" %DSTFILEDIR%
+  goto :AllDone
+)
 for /f "tokens=1-2 delims==" %%A in (%1%) do (
   if %ACTION%=="pull" (
   echo Action: Mirroring "%%~B" to "%%~A"  
@@ -70,6 +76,7 @@ echo  MirrorTool folderlist.txt push --hard pushes local directory to remote
 echo                                        to create exact mirror
 echo  [Extra options] include  /XN  exclude Newer files, /XO exclude Older files. 
 echo  MirrorTool folderlist.txt push  pushes only modified local directory to remote
+echo  MirrorTool filelist.txt collect dircollect copies all files listed in filelist.txt to directory dircollect
 echo      --------------------------------------------------------
 echo      Where folderlist.txt contains local folder and remote mapping
 echo      e.g To mirror "destination" directory to "source "file has content
