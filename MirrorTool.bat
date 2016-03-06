@@ -14,13 +14,22 @@ SET FOLDERLIST=%1
 SET ACTION="pull"
 if "%2"=="push" SET ACTION="push"
 if "%2"=="collect" SET ACTION="collect"
-if "%2"=="collect" SET DSTFILEDIR="%3"
+if "%2"=="collect" SET DSTFILEDIR=%3
+if "%2"=="collect" SET COPYOPTION=%4
+echo processing   %1% ...
+if %ACTION%=="collect" (
+  echo collecting files listed in  %1% 
+  echo destination folder is %DSTFILEDIR%
+for /f "delims=" %%i in (%1) do copy "%%i" %DSTFILEDIR% 
+  goto :AllDone
+)
+
 SET OPTION=/E
 if "%3"=="--hard" SET OPTION=/mir
 if "%FOLDERLIST%"=="" goto :NOFILE
 set EXRTA_OPTIONS=
 for /f "usebackq tokens=3*" %%i in (`echo %*`) DO @ set EXRTA_OPTIONS=%%j
-echo processing folder list file %FOLDERLIST%
+echo processing list file %FOLDERLIST%
 
 REM List the entries
 FOR /f "tokens=*" %%i IN (%FOLDERLIST%) DO @echo %%i
@@ -31,12 +40,6 @@ goto :AllDone
 
 :mirror 
 
-REM echo processing   %1% ...
-if %ACTION%=="collect" (
-  echo Action: Collecting files listed in   %1%  to directory  %DSTFILEDIR%
-  for /f "delims=" %%i in (%1%) do copy "%%i" %DSTFILEDIR%
-  goto :AllDone
-)
 for /f "tokens=1-2 delims==" %%A in (%1%) do (
   if %ACTION%=="pull" (
   echo Action: Mirroring "%%~B" to "%%~A"  
@@ -59,7 +62,7 @@ goto :END
 :NOFILE
 echo      ***  Error no folderlist.txt file  specified!      ***
 echo      --------------------------------------------------------
-echo      Usage: MirrorTool folderlist.txt [push ,pull] [--hard| --soft ] [Extra options]
+echo      Usage: MirrorTool folderlist.txt [push ,pull] [--hard , --soft ] [Extra options]
 echo      ----------------------Examples:-------------------------
 echo      Usage:
 echo  MirrorTool folderlist.txt pull --hard pulls content from 
@@ -76,7 +79,7 @@ echo  MirrorTool folderlist.txt push --hard pushes local directory to remote
 echo                                        to create exact mirror
 echo  [Extra options] include  /XN  exclude Newer files, /XO exclude Older files. 
 echo  MirrorTool folderlist.txt push  pushes only modified local directory to remote
-echo  MirrorTool filelist.txt collect dircollect copies all files listed in filelist.txt to directory dircollect
+echo  MirrorTool filelist.txt collect dircollect [/Y] for overwrite files copies all files listed in filelist.txt to directory dircollect
 echo      --------------------------------------------------------
 echo      Where folderlist.txt contains local folder and remote mapping
 echo      e.g To mirror "destination" directory to "source "file has content
